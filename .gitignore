@@ -2,3 +2,6 @@
 
 # mongodb
 mongodb/data/db/*
+
+# data cleaning
+.ipynb_checkpoints
