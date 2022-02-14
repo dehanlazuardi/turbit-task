@@ -1,0 +1,4 @@
+.env
+
+# mongodb
+mongodb/data/db/*
