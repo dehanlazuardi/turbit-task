@@ -1,37 +1,72 @@
 import argparse
 import pandas as pd
-
-file_path = "./data/raw/Turbine1.csv"
+import numpy as np
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--file-path', '-f', type=str, help='Path to the csv file')
 args = parser.parse_args()
 
-if __name__ == '__main__':
-    print(f"checking {args.file_path} file\n")
-    df = pd.read_csv(file_path, sep=";")
-    print(df.head())
-    
-    # df shape 
-    print(f"\n1. shape of the df: {df.shape}")
-
-    # data types
-    print("\n2. data types in each columns:")
-    print(df.dtypes)
-
-    # count missing value
-    print("\n3. missing value in each columns:")
+def audit_null(df):
+    """
+        check value in each row for each column 
+        is null using built in pandas isnull function.
+    """
+    print("----Checking Null Value----")
+    print("null in column:")
+    columns = list(df.columns)
     null_per_col = df.isnull().sum()
-    print(null_per_col)
+    for col in columns:
+        print(f" - \"{col}\"\t: {null_per_col[col]}")
 
-    # summary
-    print("\nSummary:")
-    total_data = df.shape[0]*df.shape[1]
-    print(f" - total data: {total_data}")
     total_null = null_per_col.sum()
-    print(f" - total null value: {total_null}")
-    ratio = total_null/total_data * 100
-    print(f" - null value ratio: {ratio}%")
+    print(f"\ntotal null value: {total_null}")
+    ratio = total_null/(df.shape[0]*df.shape[1])*100
+    print(f"ratio null/total: {round(ratio,2)}%\n\n")
+
+
+def audit_numeric(df):
+    """
+        check value in each row for each column 
+        wether numeric or non-numeric 
+        using built in pandas is_numeric function.
+    """
+    print("----Checking Numeric Value----")
+    columns = list(df.columns)
+    sum_numeric_count = 0
+    sum_non_numeric_count = 0
+    for col in columns:
+        numeric_series = df[col].astype(str).str.isnumeric()
+        print(f"column \"{col}\":")
+
+        numeric_count = 0
+        if True in set(numeric_series):
+            numeric_count = numeric_series.value_counts()[True]
+        print(f" - Numeric\t: {numeric_count}")
+
+        non_numeric_count = 0
+        if False in set(numeric_series):
+            non_numeric_count = numeric_series.value_counts()[False]
+        print(f" - Non-numeric\t: {non_numeric_count}\n")
+
+        sum_numeric_count += numeric_count
+        sum_non_numeric_count += non_numeric_count
+
+    print(f"total numeric items\t: {sum_numeric_count}")
+    print(f"total non-numeric items\t: {sum_non_numeric_count}")
+    ratio = sum_non_numeric_count/(sum_numeric_count+sum_non_numeric_count)*100
+    print(f"ratio non-numeric/total\t: {round(ratio, 2)}%\n\n")
+
+def audit(df):
+    audit_numeric(df)
+    audit_null(df)
+
+if __name__ == '__main__':
+    file_path = args.file_path
+    print(f"Auditing {file_path} file...\n")
+    df = pd.read_csv(file_path, sep=";")
+
+    print(f"shape of df: {df.shape}\n")
+    audit(df)
 
 
 
