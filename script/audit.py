@@ -11,6 +11,10 @@ def audit_null(df):
         check value in each row for each column 
         is null using built in pandas isnull function.
     """
+    #  delete white space, replace with nan
+    df = df.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
+    df = df.replace("", np.nan)
+
     print("----Checking Null Value----")
     print("null in column:")
     columns = list(df.columns)
@@ -21,8 +25,7 @@ def audit_null(df):
     total_null = null_per_col.sum()
     print(f"\ntotal null value: {total_null}")
     ratio = total_null/(df.shape[0]*df.shape[1])*100
-    print(f"ratio null/total: {round(ratio,2)}%\n\n")
-
+    print(f"ratio null/total: {round(ratio,3)}%\n\n")
 
 def audit_numeric(df):
     """
@@ -61,9 +64,10 @@ def audit(df):
     audit_null(df)
 
 if __name__ == '__main__':
+    # read csv file
     file_path = args.file_path
     print(f"Auditing {file_path} file...\n")
-    df = pd.read_csv(file_path, sep=";")
+    df = pd.read_csv(file_path, sep=";", decimal=",")
 
     print(f"shape of df: {df.shape}\n")
     audit(df)
