@@ -35,29 +35,31 @@ def audit_numeric(df):
     """
     print("----Checking Numeric Value----")
     columns = list(df.columns)
-    sum_numeric_count = 0
-    sum_non_numeric_count = 0
+    sum_digit_count = 0
+    sum_non_digit_count = 0
     for col in columns:
-        numeric_series = df[col].astype(str).str.isnumeric()
         print(f"column \"{col}\":")
+        # delete "." and "-", otherwise for real number 0.3 and minus -9 wont be recognized as digit
+        stripped = df[col].astype(str).str.replace(".", "", 1, regex=False).str.lstrip('-')
+        digit_series = stripped.str.isdigit()
 
         numeric_count = 0
-        if True in set(numeric_series):
-            numeric_count = numeric_series.value_counts()[True]
-        print(f" - Numeric\t: {numeric_count}")
+        if True in set(digit_series):
+            numeric_count = digit_series.value_counts()[True]
+        print(f" - digit\t: {numeric_count}")
 
         non_numeric_count = 0
-        if False in set(numeric_series):
-            non_numeric_count = numeric_series.value_counts()[False]
-        print(f" - Non-numeric\t: {non_numeric_count}\n")
+        if False in set(digit_series):
+            non_numeric_count = digit_series.value_counts()[False]
+        print(f" - non-digit\t: {non_numeric_count}\n")
 
-        sum_numeric_count += numeric_count
-        sum_non_numeric_count += non_numeric_count
+        sum_digit_count += numeric_count
+        sum_non_digit_count += non_numeric_count
 
-    print(f"total numeric items\t: {sum_numeric_count}")
-    print(f"total non-numeric items\t: {sum_non_numeric_count}")
-    ratio = sum_non_numeric_count/(sum_numeric_count+sum_non_numeric_count)*100
-    print(f"ratio non-numeric/total\t: {round(ratio, 2)}%\n\n")
+    print(f"total digit items\t: {sum_digit_count}")
+    print(f"total non-digit items\t: {sum_non_digit_count}")
+    ratio = sum_non_digit_count/(sum_digit_count+sum_non_digit_count)*100
+    print(f"ratio non-digit/total\t: {round(ratio, 2)}%\n\n")
 
 def audit(df):
     audit_numeric(df)
