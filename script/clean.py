@@ -30,8 +30,5 @@ if __name__ == '__main__':
     # restart indexed to 0 because we already drop the first index
     df = df.drop([0]).reset_index(drop=True)
 
-    # parse time
-    df['Dat/Zeit'] = pd.to_datetime(df['Dat/Zeit'], format="%d.%m.%Y, %H:%M")
-
     # save to csv
-    df.to_csv(args.folder_path, sep=';')
+    df.to_csv(args.folder_path, sep=';', index=False)
