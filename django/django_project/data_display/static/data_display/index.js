@@ -1,78 +1,80 @@
-const data = {
-        datasets: [{
-            label: 'Scatter Dataset',
-            data: [{
-                x: "2016-01-01 00:10:00",
-                y: 0
-            }, {
-                x: "2016-01-01 00:20:00",
-                y: 10
-            }, {
-                x: "2016-01-01 00:30:00",
-                y: 5
-            }, {
-                x: "2016-01-01 00:40:00",
-                y: 5.5
-            }],
-            backgroundColor: 'rgb(255, 99, 132)'
-        }],
-    };
-
-const config = {
-        type: 'scatter',
-        data: data,
-        options: {
-            scales: {
-                x: {
-                    type: 'time',
-                    time: {
-                        displayFormats: {
-                            quarter: 'MM YYYY'
-                        }
-                    }
-                }
+let myConfig = {
+    type: 'line',
+    timezone:0,
+    title: {
+        text: 'Data Basics',
+        fontSize: 24,
+    },
+    legend: {
+        draggable: true,
+    },
+    scaleX: {
+        maxItems: 10,
+        transform: {
+            type: "date",
+            all: "%Y-%m-%d<br>%H:%i",
+            item: {
+                visible: false
             }
+        },
+        zooming: true,
+        label: { text: 'Date & Time' }
+    },
+    utc: true,
+    timezone: 0,
+    scaleY: {
+        // Scale label with unicode character
+        label: { text: 'Temperature (°F)' }
+    },
+    series: [
+        {
+            values: [
+                [1433282400000,25.68],
+                [1433286000000,26.41],
+                [1433289600000,26.52],
+                [1433293200000,26.23],
+                [1433296800000,25.77]
+            ],
+            text: 'test-1'
+        },
+    ],
+    preview: {
+        adjustLayout: true,
+        live: true
+    },
+    crosshairX: {
+        lineColor: '#555',
+        marker: {
+          borderColor: '#fff',
+          borderWidth: '1px',
+          size: '5px'
+        },
+        plotLabel: {
+          backgroundColor: '#fff',
+          borderRadius: '2px',
+          borderWidth: '2px',
+          multiple: true
         }
-    };
+    }
+};
 
-const myChart = new Chart(document.getElementById('myChart'), 
-                        {
-                            type: 'line',
-                            data: {
-                                datasets: [{
-                                    data: [{
-                                        x: '2016-01-01T01:00:00Z',
-                                        y: 50
-                                    }, {
-                                        x: '2016-01-01T01:00:00Z',
-                                        y: 60
-                                    }, {
-                                        x: '2016-01-01T01:00:00Z',
-                                        y: 20
-                                    }],
-                                    backgroundColor: 'rgb(255, 99, 132)'
-                                }],
-                            },
-                            options: {
-                                scales: {
-                                    xAxes: [{
-                                        type: 'time',
-                                        time: {
-                                            parser: 'YYYY-MM-DDTHH:mm:ss',
-                                            unit: 'date',
-                                            displayFormats: {
-                                                'date': 'YYYY-MM-DD'
-                                            }
-                                        }
-                                    }]
-                                },
-                                bezierCurve: true
-                            }
-                        });
+zingchart.render({
+    id: 'myChart',
+    data: myConfig
+});
 
-function updateChart(new_data){
-    myChart.config.data.datasets[0].data = new_data;
-    myChart.update();
+function updateChart(newData){
+    zingchart.exec('myChart', 'setseriesvalues', {
+        'values': newData
+    });
+}
+
+function makeUrl(){
+    startDate = document.getElementById('startdate').value;
+    endDate = document.getElementById('enddate').value;
+    propertyName = document.getElementById('data').value;
+
+    return `data?start=${startDate}&end=${endDate}&key=${propertyName}`
 }
 
 function update(){
@@ -83,9 +85,11 @@ function update(){
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-            updateChart(JSON.parse(this.responseText));
+            newData = JSON.parse(this.responseText)
+            updateChart(newData);
         }
     };
-    xhttp.open("GET", "/data", true);
+    url = makeUrl()
+    xhttp.open("GET", url, true);
     xhttp.send();
 }

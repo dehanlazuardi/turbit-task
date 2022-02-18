@@ -19,14 +19,21 @@ def connect_to_mongodb(username: string, password: string, host: string):
     client = pymongo.MongoClient(uri)
     return client
 
+def make_mongo_query(start: string, end: string, key: string):
+    start_date = datetime.strptime(start, '%Y-%m-%dT%H:%M')
+    end_date = datetime.strptime(end, '%Y-%m-%dT%H:%M')
+    query = {"Dat/Zeit": {"$gte": start_date, "$lte": end_date}}
+    projection = {"_id": 0, key: 1, "Dat/Zeit": 1}
+    return (query, projection)
+
 def map_result(item, key):
-    modified_item = {}
-    modified_item["x"] = item["Dat/Zeit"].isoformat()
+    value = 0
     if "value" in item[key].keys():
-        modified_item["y"] = item[key]["value"]
+        value = item[key]["value"]
     else:
-        modified_item["y"] = item[key]
-    return modified_item
+        value = item[key]
+    posix_time = time.mktime(item["Dat/Zeit"].timetuple()) * 1000
+    return [posix_time, value]
 
 def index(request):
     return render(request, 'data_display/index.html')
@@ -38,16 +45,13 @@ def get_data(request):
     collection = db["turbine-1"]
 
     # make mongo query
-    start_date = datetime(2016, 1, 1, 0, 0, 0)
-    end_date = datetime(2016, 3, 1, 23, 59, 0)
-    key = "Strom-"
-    query = {"Dat/Zeit": {"$gte": start_date, "$lte": end_date}}
-    projection = {"_id": 0, key: 1, "Dat/Zeit": 1}
+    key = request.GET["key"]
+    query, projection = make_mongo_query(request.GET["start"], request.GET["end"], key)
     
     # get data from db
     data = collection.find(query, projection)
 
     # map to chart.js scatter plot data
-    data = [map_result(item, key) for item in data]
+    data = [[map_result(item, key) for item in data]]
     
     return JsonResponse(data, safe=False)

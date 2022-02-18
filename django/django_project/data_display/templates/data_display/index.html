@@ -9,13 +9,24 @@
     <!-- <link rel="stylesheet" href="style.css"> -->
   </head>
   <body>
+    <div id="myChart"></div>
     <div>
-      <canvas id="myChart"></canvas>
+      <label for="data">Choose data:</label>
+      <select name="data" id="data">
+        <option value="Wind">wind</option>
+        <option value="Rotor">rotor</option>
+        <option value="Leistung">power</option>
+        <option value="Strom-">current</option>
+        <option value="Spann">voltage</option>
+        <option value="Gen1-">generator-temperature</option>
+        <option value="Außen">ambience-temperature</option>
+      </select>
+      <input type="datetime-local" id="startdate" value="2016-01-01T00:00" min="2016-01-01T00:00" max="2016-03-31T23:59">
+      <input type="datetime-local" id="enddate" value="2016-03-31T23:59" min="2016-01-01T00:00" max="2016-03-31T23:59">
+      <input onclick="update()" type="button" value="show">
     </div>
-    <input type="datetime-local" id="startdate" value="2016-01-01T00:00" min="2016-01-01T00:00" max="2016-03-31T23:59">
-    <input type="datetime-local" id="enddate" value="2016-03-31T23:59" min="2016-01-01T00:00" max="2016-03-31T23:59">
-    <input onclick="update()" type="button" value="show">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.zingchart.com/zingchart.min.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
 	<script src="{% static 'data_display/index.js' %}"></script>
   </body>
 </html>
