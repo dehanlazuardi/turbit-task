@@ -1,12 +1,17 @@
 import string
 from django.shortcuts import render
 from django.http import JsonResponse
-from bson.json_util import dumps
+import os
 
 from datetime import datetime
 import time
 from urllib.parse import quote_plus
 import pymongo
+
+# get db cred
+db_username= os.environ['DB_USERNAME']
+db_password= os.environ['DB_PASSWORD']
+db_host= os.environ['DB_HOST']
 
 
 def connect_to_mongodb(username: string, password: string, host: string):
@@ -20,6 +25,9 @@ def connect_to_mongodb(username: string, password: string, host: string):
     return client
 
 def make_mongo_query(start: string, end: string, key: string):
+    """
+        make mongodb query
+    """
     start_date = datetime.strptime(start, '%Y-%m-%dT%H:%M')
     end_date = datetime.strptime(end, '%Y-%m-%dT%H:%M')
     query = {"Dat/Zeit": {"$gte": start_date, "$lte": end_date}}
@@ -27,6 +35,9 @@ def make_mongo_query(start: string, end: string, key: string):
     return (query, projection)
 
 def map_result(item, key):
+    """
+    
+    """
     value = 0
     if "value" in item[key].keys():
         value = item[key]["value"]
@@ -40,10 +51,12 @@ def index(request):
 
 def get_data(request):
     # connect to mongodb, select db and collection
-    client = connect_to_mongodb("root", "test1234", "localhost:27017")
+    client = connect_to_mongodb(db_username, db_password, db_host)
     db = client["development"]
     collection = db["turbine-1"]
-
+    if request.GET["turbine"] == '2' :
+        collection = db["turbine-2"]
+    
     # make mongo query
     key = request.GET["key"]
     query, projection = make_mongo_query(request.GET["start"], request.GET["end"], key)
@@ -51,7 +64,14 @@ def get_data(request):
     # get data from db
     data = collection.find(query, projection)
 
-    # map to chart.js scatter plot data
-    data = [[map_result(item, key) for item in data]]
-    
-    return JsonResponse(data, safe=False)
+    # get data unit from db
+    unit = collection.find_one(projection={"_id": 0, key+".unit": 1, })
+
+    # build response
+    mapped_data = [map_result(item, key) for item in data]
+    resp = {
+        "data": mapped_data,
+        "unit": unit[key]["unit"]
+    }
+
+    return JsonResponse(resp, safe=False)

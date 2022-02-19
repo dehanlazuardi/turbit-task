@@ -1,95 +1,124 @@
-let myConfig = {
-    type: 'line',
-    timezone:0,
-    title: {
-        text: 'Data Basics',
-        fontSize: 24,
-    },
-    legend: {
-        draggable: true,
-    },
-    scaleX: {
-        maxItems: 10,
-        transform: {
-            type: "date",
-            all: "%Y-%m-%d<br>%H:%i",
-            item: {
-                visible: false
+function makeChartConfig(chartName) {
+    myConfig = {
+        type: 'line',
+        timezone: 0,
+        utc: true,
+        title: {
+            text: chartName,
+            fontSize: 24,
+        },
+        legend: {
+            draggable: false,
+        },
+        scaleX: {
+            maxItems: 10,
+            transform: {
+                type: "date",
+                all: "%Y-%m-%d<br>%H:%i",
+                item: {
+                    visible: false
+                }
+            },
+            zooming: true,
+            label: { text: 'Date & Time' }
+        },
+        scaleY: {
+            // Scale label with unicode character
+            label: { text: 'Temperature (°F)' }
+        },
+        preview: {
+            adjustLayout: true,
+            live: true
+        },
+        crosshairX: {
+            lineColor: '#555',
+            marker: {
+                borderColor: '#fff',
+                borderWidth: '1px',
+                size: '5px'
+            },
+            plotLabel: {
+                backgroundColor: '#fff',
+                borderRadius: '2px',
+                borderWidth: '2px',
+                multiple: true
             }
-        },
-        zooming: true,
-        label: { text: 'Date & Time' }
-    },
-    utc: true,
-    timezone: 0,
-    scaleY: {
-        // Scale label with unicode character
-        label: { text: 'Temperature (°F)' }
-    },
-    series: [
-        {
-            values: [
-                [1433282400000,25.68],
-                [1433286000000,26.41],
-                [1433289600000,26.52],
-                [1433293200000,26.23],
-                [1433296800000,25.77]
-            ],
-            text: 'test-1'
-        },
-    ],
-    preview: {
-        adjustLayout: true,
-        live: true
-    },
-    crosshairX: {
-        lineColor: '#555',
-        marker: {
-          borderColor: '#fff',
-          borderWidth: '1px',
-          size: '5px'
-        },
-        plotLabel: {
-          backgroundColor: '#fff',
-          borderRadius: '2px',
-          borderWidth: '2px',
-          multiple: true
         }
-    }
-};
+    };
+    return myConfig
+}
 
 zingchart.render({
-    id: 'myChart',
-    data: myConfig
+    id: 'myChartLeft',
+    data: makeChartConfig("Turbine-1")
 });
 
-function updateChart(newData){
-    zingchart.exec('myChart', 'setseriesvalues', {
-        'values': newData
+zingchart.render({
+    id: 'myChartRight',
+    data: makeChartConfig("Turbine-2")
+});
+
+function updateChart(newData, unit = '', chartNum) {
+    // update data value
+    optionElement = document.getElementById('data-left')
+    chartId = "myChartLeft"
+    if (chartNum ==  2) {
+        optionElement = document.getElementById('data-right')
+        chartId = "myChartRight"
+    }
+    dataName = optionElement.options[optionElement.selectedIndex].text;
+    seriesNewData = [
+        {
+            values: newData,
+            text: dataName
+        }
+    ];
+    zingchart.exec(chartId, 'setseriesdata', {
+        'data': seriesNewData
+    });
+
+    // update axis Y
+    labelY = `${dataName}`
+    if (unit) {
+        labelY += ` (${unit})`
+    }
+    zingchart.exec(chartId, 'modify', {
+        data: {
+            scaleY: {
+                label: { text: labelY }
+            }
+        }
     });
 }
 
-function makeUrl(){
-    startDate = document.getElementById('startdate').value;
-    endDate = document.getElementById('enddate').value;
-    propertyName = document.getElementById('data').value;
+function makeUrl(chartNum) {
+    startDateId = "start-date-left"
+    endDateId = "end-date-left"
+    propertyNameId = "data-left"
+    turbine = "1"
+    if (chartNum == 2) {
+        startDateId = "start-date-right"
+        endDateId = "end-date-right"
+        propertyNameId = "data-right"
+        turbine = "2"
+    }
 
-    return `data?start=${startDate}&end=${endDate}&key=${propertyName}`
+    startDate = document.getElementById(startDateId).value;
+    endDate = document.getElementById(endDateId).value;
+    propertyName = document.getElementById(propertyNameId).value;
+
+    return `/data?start=${startDate}&end=${endDate}&key=${propertyName}&turbine=${turbine}`
 }
 
-function update(){
-    startDate = document.getElementById('startdate').value;
-    endDate = document.getElementById('enddate').value;
-    propertyName = "Wind";
-
+function update(chartNum) {
     var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
+    xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             newData = JSON.parse(this.responseText)
-            updateChart(newData);
+            updateChart(newData['data'], newData['unit'], chartNum);
         }
     };
-    url = makeUrl()
+    url = makeUrl(chartNum)
     xhttp.open("GET", url, true);
     xhttp.send();
 }
