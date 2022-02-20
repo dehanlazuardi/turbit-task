@@ -1,5 +1,9 @@
 .env
 .ipynb_checkpoints
+__pycache__
 
 # mongodb
 mongodb/data/db/*
+
+# django
+django/django_project/db.sqlite3
