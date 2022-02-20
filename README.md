@@ -1,4 +1,4 @@
-# Data Engineer Internship Task
+# Practical Task
 
 This project audits and cleans raw turbine data then load them to the database (mongodb). This project also includes django to serve data to the user through data dashboard. The data is saved under directory data/raw/.  
 
@@ -43,9 +43,9 @@ There are 2 audits done by this script, the first one is to check wether all of 
 
  - then clean the data using: 
 ```bash
-python script/clean.py -f <path to the raw data file> -o <path to the clean data folder>
+python script/clean.py -f <path to the raw data file> -o <path to the clean data file>
 
-python script/clean.py -f data/raw/Turbine1.csv -o data/clean/ 
+python script/clean.py -f data/raw/Turbine1.csv -o data/clean/Turbine1.csv
 
 ```
 this process move the first row of the raw data which contain measurement units to the new column. . Repeat this process for Turbine2.csv. Make sure after clean all of the data to run the audit script to the clean data csv file to check the data quality.
