@@ -1,4 +1,4 @@
-# Data Engineer Internship Task
+# Practical Task
 
 This project audits and cleans raw turbine data then load them to the database (mongodb). This project also includes django to serve data to the user through data dashboard. The data is saved under directory data/raw/.  
 
