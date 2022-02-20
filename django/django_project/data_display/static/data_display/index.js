@@ -96,6 +96,7 @@ function updateChart(newData, unit = '', chartNum) {
             }
         }
     });
+    zingchart.exec(chartId, 'viewall');
 }
 
 function makeUrl(chartNum) {
