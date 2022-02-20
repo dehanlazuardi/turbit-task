@@ -12,7 +12,9 @@ import pymongo
 db_username= os.environ['DB_USERNAME']
 db_password= os.environ['DB_PASSWORD']
 db_host= os.environ['DB_HOST']
-
+db_username="root"
+db_password="test1234"
+db_host="localhost:27017"
 
 def connect_to_mongodb(username: string, password: string, host: string):
     """
@@ -61,6 +63,14 @@ def get_data(request):
     key = request.GET["key"]
     query, projection = make_mongo_query(request.GET["start"], request.GET["end"], key)
     
+    # check is data empty
+    if collection.count_documents(query) == 0:
+        resp = {
+            "data": [],
+            "unit": ""
+        }
+        return JsonResponse(resp, safe=False)
+
     # get data from db
     data = collection.find(query, projection)
 

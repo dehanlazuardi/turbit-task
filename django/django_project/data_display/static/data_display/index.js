@@ -43,7 +43,14 @@ function makeChartConfig(chartName) {
                 borderWidth: '2px',
                 multiple: true
             }
-        }
+        },
+        noData: {
+            text: "Currently there is no data in the chart",
+            fontSize: 18,
+            textAlpha: .9,
+            alpha: .6,
+            bold: true
+          },
     };
     return myConfig
 }
