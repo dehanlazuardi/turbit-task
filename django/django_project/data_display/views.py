@@ -36,7 +36,7 @@ def make_mongo_query(start: string, end: string, key: string):
 
 def map_result(item, key):
     """
-    
+        convert mongodb dict to FE format
     """
     value = 0
     if "value" in item[key].keys():
@@ -64,7 +64,7 @@ def get_data(request):
     # get data from db
     data = collection.find(query, projection)
 
-    # get data unit from db
+    # get data's unit from db
     unit = collection.find_one(projection={"_id": 0, key+".unit": 1, })
 
     # build response
