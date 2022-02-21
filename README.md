@@ -57,3 +57,7 @@ python script/load.py -f <path to the clean data file> -u <db username> -p <db p
 python script/load.py -f data/clean/Turbine1.csv -u <db username> -p <db password> -a localhost:27017 -d development -c turbine-1
 ```
 repeat this process for Turbine2 clean data, dont forget to change the collection name when loading the Turbine2 data. Check on the http://localhost:8000 and choose date range, data type to be displayed.
+
+
+# Practical Task
+theoritical task answer is on [theoritical-task.md](theoritical-task.md)

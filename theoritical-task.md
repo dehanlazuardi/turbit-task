@@ -13,7 +13,7 @@ assumption:
 To address this issue, we can use factory pattern when parsing the data (implemented in the code below). First we specify the correct parser that we want to use to parse the column name and the date time data. Then object factory (ColumnParserFactory, TimeDateParserFactory) will provide the correct parser. Finally we can parse the data correctly in the parse.py. If we want to add new parser code, we can add the new parser and register them.  
 
 ```python
-# csv.py
+# csv_object.py
 
 # CSV object 
 class CSV:
@@ -122,6 +122,10 @@ class TimeDateParserFactory:
 
 ```python
 # parse.py
+from  csv_object import CSV
+from column_parser import column_factory, ColumnParserTypeA, ColumnParserTypeB
+from time_date_parser import time_date_factory, TimeDateParserTypeA,
+TimeDateParserTypeB
 
 # register column parsers
 column_factory = ColumnParserFactory()
@@ -144,6 +148,7 @@ if __name__ == "__main__":
     date_time_parser = time_date_factory.get_CSV_parser(time_date_format)
 
     # parse and save the csv
+    csv_object("path to csv")
     csv_object.register_col_parser(column_parser)
     csv_object.register_time_date_parser(date_time_parser)
     csv_object.parse_data()

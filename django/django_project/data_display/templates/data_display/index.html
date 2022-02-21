@@ -9,22 +9,22 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   </head>
-  <body onload="update(1); update(2)">
-    <div class="container pt-5">
-      <div class="row">
-      <!-- left -->
+  <body onload="update(1); update(2); update(3);">
+    <div class="container">
+      <div class="row pt-5">
+        <!-- 1 -->
         <div class="col-sm">
 
           <!-- chart -->
-          <div id="myChartLeft"></div>
+          <div id="myChart1"></div>
 
           <!-- option -->
           <div class="row">
             <div class="col-sm-3">
-              <label for="data-left">Choose data</label>
+              <label for="data-1">Choose data</label>
             </div>
             <div class="col-sm-9">
-              <select name="data-left" id="data-left">
+              <select name="data-1" id="data-1">
                 <option value="Wind">wind</option>
                 <option value="Rotor">rotor</option>
                 <option value="Leistung">power</option>
@@ -41,10 +41,10 @@
           <!-- start date -->
           <div class="row">
             <div class="col-sm-3">
-              <label for="start-date-left">start date</label>
+              <label for="start-date-1">start date</label>
             </div>
             <div class="col-sm-9">
-              <input type="datetime-local" id="start-date-left" value="2016-01-01T00:00" min="2016-01-01T00:00" max="2016-03-31T23:59">
+              <input type="datetime-local" id="start-date-1" value="2016-01-01T00:00" min="2016-01-01T00:00" max="2016-03-31T23:59">
             </div>
             
           </div>
@@ -53,10 +53,10 @@
           <!-- end date -->
           <div class="row">
             <div class="col-sm-3">
-              <label for="end-date-left">end date:</label>
+              <label for="end-date-1">end date:</label>
             </div>
             <div class="col-sm-9">
-              <input type="datetime-local" id="end-date-left" value="2016-01-01T23:59" min="2016-01-01T00:00" max="2016-03-31T23:59">
+              <input type="datetime-local" id="end-date-1" value="2016-01-01T23:59" min="2016-01-01T00:00" max="2016-03-31T23:59">
             </div>
           </div>
 
@@ -66,19 +66,19 @@
           </div>
         </div>
 
-        <!-- right -->
+        <!-- 2 -->
         <div class="col-sm">
           
           <!-- chart -->
-          <div id="myChartRight"></div>
+          <div id="myChart2"></div>
 
           <!-- option -->
           <div class="row">
             <div class="col-sm-3">
-              <label for="data-right">Choose data</label>
+              <label for="data-2">Choose data</label>
             </div>
             <div class="col-sm-9">
-              <select name="data-right" id="data-right">
+              <select name="data-2" id="data-2">
                 <option value="Wind">wind</option>
                 <option value="Rotor">rotor</option>
                 <option value="Leistung">power</option>
@@ -95,10 +95,10 @@
           <!-- start date -->
           <div class="row">
             <div class="col-sm-3">
-              <label for="start-date-right">start date</label>
+              <label for="start-date-2">start date</label>
             </div>
             <div class="col-sm-9">
-              <input type="datetime-local" id="start-date-right" value="2016-01-01T00:00" min="2016-01-01T00:00" max="2016-03-31T23:59">
+              <input type="datetime-local" id="start-date-2" value="2016-01-01T00:00" min="2016-01-01T00:00" max="2016-03-31T23:59">
             </div>
             
           </div>
@@ -106,16 +106,70 @@
           <!-- end date -->
           <div class="row">
             <div class="col-sm-3">
-              <label for="end-date-right">end date:</label>
+              <label for="end-date-2">end date:</label>
             </div>
             <div class="col-sm-9">
-              <input type="datetime-local" id="end-date-right" value="2016-01-01T23:59" min="2016-01-01T00:00" max="2016-03-31T23:59">
+              <input type="datetime-local" id="end-date-2" value="2016-01-01T23:59" min="2016-01-01T00:00" max="2016-03-31T23:59">
             </div>
           </div>
 
           <!-- submit -->
           <div class="row px-3">
             <input onclick="update(2)" type="button" value="submit">
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-5 pb-5">
+        <!-- 3 -->
+        <div class="col-sm-6">
+
+          <!-- chart -->
+          <div id="myChart3"></div>
+
+          <div class="row">
+            <div class="col-sm-3">
+              <label for="data-3">Choose data</label>
+            </div>
+            <div class="col-sm-9">
+              <select name="data-3" id="data-3" disabled>
+                <option value="Wind-Power" selected>wind vs Power</option>
+                <option value="Wind">wind</option>
+                <option value="Rotor">rotor</option>
+                <option value="Leistung">power</option>
+                <option value="Strom-">current</option>
+                <option value="Spann">voltage</option>
+                <option value="Gen1-">generator-temperature</option>
+                <option value="Außen">ambience-temperature</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- start date -->
+          <div class="row">
+            <div class="col-sm-3">
+              <label for="start-date-3">start date</label>
+            </div>
+            <div class="col-sm-9">
+              <input type="datetime-local" id="start-date-3" value="2016-01-01T00:00" min="2016-01-01T00:00" max="2016-03-31T23:59">
+            </div>
+            
+          </div>
+        
+
+          <!-- end date -->
+          <div class="row">
+            <div class="col-sm-3">
+              <label for="end-date-3">end date:</label>
+            </div>
+            <div class="col-sm-9">
+              <input type="datetime-local" id="end-date-3" value="2016-01-01T23:59" min="2016-01-01T00:00" max="2016-03-31T23:59">
+            </div>
+          </div>
+
+          <!-- submit -->
+          <div class="row px-3">
+            <input onclick="update(3)" type="button" value="submit">
           </div>
         </div>
       </div>
