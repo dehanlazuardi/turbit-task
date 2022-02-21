@@ -9,12 +9,12 @@ from urllib.parse import quote_plus
 import pymongo
 
 # get db cred
-# db_username= os.environ['DB_USERNAME']
-# db_password= os.environ['DB_PASSWORD']
-# db_host= os.environ['DB_HOST']
-db_username="root"
-db_password="test1234"
-db_host="localhost:27017"
+db_username= os.environ['DB_USERNAME']
+db_password= os.environ['DB_PASSWORD']
+db_host= os.environ['DB_HOST']
+# db_username="root"
+# db_password="test1234"
+# db_host="localhost:27017"
 
 def _connect_to_mongodb(username: string, password: string, host: string):
     """
