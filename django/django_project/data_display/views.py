@@ -9,14 +9,14 @@ from urllib.parse import quote_plus
 import pymongo
 
 # get db cred
-db_username= os.environ['DB_USERNAME']
-db_password= os.environ['DB_PASSWORD']
-db_host= os.environ['DB_HOST']
-# db_username="root"
-# db_password="test1234"
-# db_host="localhost:27017"
+# db_username= os.environ['DB_USERNAME']
+# db_password= os.environ['DB_PASSWORD']
+# db_host= os.environ['DB_HOST']
+db_username="root"
+db_password="test1234"
+db_host="localhost:27017"
 
-def connect_to_mongodb(username: string, password: string, host: string):
+def _connect_to_mongodb(username: string, password: string, host: string):
     """
         connect to mongodb in the host with
         given username and client, return client pymongo object
@@ -26,48 +26,70 @@ def connect_to_mongodb(username: string, password: string, host: string):
     client = pymongo.MongoClient(uri)
     return client
 
-def make_mongo_query(start: string, end: string, key: string):
+def _make_data_query(start: string, end: string, keys: list):
     """
-        make mongodb query
+        make mongodb query for getting data
     """
     start_date = datetime.strptime(start, '%Y-%m-%dT%H:%M')
     end_date = datetime.strptime(end, '%Y-%m-%dT%H:%M')
+    
+    # make query
     query = {"Dat/Zeit": {"$gte": start_date, "$lte": end_date}}
-    projection = {"_id": 0, key: 1, "Dat/Zeit": 1}
+
+    # make projection
+    projection = {"_id": 0}
+    for key in keys:
+            projection[key] = {
+                "$ifNull": [ f"${key}.value", f"${key}", "" ]
+            }
     return (query, projection)
 
-def map_result(item, key):
+def _make_unit_query(keys: list):
+    """
+        make mongodb query for getting unit
+    """
+    # make projection
+    unit_projection = {"_id": 0}
+    for key in keys:
+        unit_projection[key] = {
+           "$ifNull": [ f"${key}.unit", "" ]
+        }
+    return unit_projection
+
+
+def _map_result(item, keys):
     """
         convert mongodb dict to FE format
     """
-    value = 0
-    if "value" in item[key].keys():
-        value = item[key]["value"]
-    else:
-        value = item[key]
-    posix_time = time.mktime(item["Dat/Zeit"].timetuple()) * 1000
-    return [posix_time, value]
+    res = []
+    for key in keys:
+        if key == "Dat/Zeit":
+            posix_time = time.mktime(item[key].timetuple()) * 1000
+            res.append(posix_time)
+        else:
+            res.append(item[key])
+    return res
 
 def index(request):
     return render(request, 'data_display/index.html')
 
 def get_data(request):
     # connect to mongodb, select db and collection
-    client = connect_to_mongodb(db_username, db_password, db_host)
+    client = _connect_to_mongodb(db_username, db_password, db_host)
     db = client["development"]
-    collection = db["turbine-1"]
-    if request.GET["turbine"] == '2' :
-        collection = db["turbine-2"]
+    collection_name = f"turbine-{request.GET['turbine']}"
+    collection = db[collection_name]
     
     # make mongo query
-    key = request.GET["key"]
-    query, projection = make_mongo_query(request.GET["start"], request.GET["end"], key)
+    keys = request.GET.getlist("key")
+    query, projection = _make_data_query(request.GET["start"], request.GET["end"], keys)
     
     # check is data empty
     if collection.count_documents(query) == 0:
         resp = {
             "data": [],
-            "unit": ""
+            "unit": [],
+            "name": [],
         }
         return JsonResponse(resp, safe=False)
 
@@ -75,13 +97,16 @@ def get_data(request):
     data = collection.find(query, projection)
 
     # get data's unit from db
-    unit = collection.find_one(projection={"_id": 0, key+".unit": 1, })
+    unit_projection = _make_unit_query(keys)
+    units = collection.find_one(projection=unit_projection)
 
     # build response
-    mapped_data = [map_result(item, key) for item in data]
+    mapped_data = [_map_result(item, keys) for item in data]
+    mapped_unit = [units[key] for key in keys]
     resp = {
         "data": mapped_data,
-        "unit": unit[key]["unit"]
+        "unit": mapped_unit,
+        "name": keys
     }
 
     return JsonResponse(resp, safe=False)
