@@ -38,6 +38,7 @@ pip install -r requirement.txt
 python script/audit.py -f <path to the raw data>
 
 python script/audit.py -f data/raw/Turbine1.csv
+python script/audit.py -f data/raw/Turbine2.csv
 ```
 There are 2 audits done by this script, the first one is to check wether all of the column contain numerical or non-numerical value. The second one is to check null value among data point. Repeat this process for Turbine2.csv
 
@@ -46,6 +47,7 @@ There are 2 audits done by this script, the first one is to check wether all of 
 python script/clean.py -f <path to the raw data file> -o <path to the clean data file>
 
 python script/clean.py -f data/raw/Turbine1.csv -o data/clean/Turbine1.csv
+python script/clean.py -f data/raw/Turbine2.csv -o data/clean/Turbine2.csv
 
 ```
 this process move the first row of the raw data which contain measurement units to the new column. . Repeat this process for Turbine2.csv. Make sure after clean all of the data to run the audit script to the clean data csv file to check the data quality.
@@ -55,9 +57,10 @@ this process move the first row of the raw data which contain measurement units 
 python script/load.py -f <path to the clean data file> -u <db username> -p <db password> -a <db host> -d <database name> -c <collection name>
 
 python script/load.py -f data/clean/Turbine1.csv -u <db username> -p <db password> -a localhost:27017 -d development -c turbine-1
+python script/load.py -f data/clean/Turbine2.csv -u <db username> -p <db password> -a localhost:27017 -d development -c turbine-2
 ```
 repeat this process for Turbine2 clean data, dont forget to change the collection name when loading the Turbine2 data. Check on the http://localhost:8000 and choose date range, data type to be displayed.
 
 
-# Practical Task
-theoritical task answer is on [theoritical-task.md](theoritical-task.md)
+# Theoritical Task
+Theoritical task answer is on [theoritical-task.md](theoritical-task.md). Furthermore there are log in the [log.md](log.md) records what I did in this project.
