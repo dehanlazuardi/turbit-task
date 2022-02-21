@@ -1,6 +1,7 @@
 import argparse
 import pandas as pd
 import numpy as np
+from factory.null_auditor import NullAuditor
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--file-path', '-f', type=str, help='Path to the csv file')
@@ -8,19 +9,17 @@ args = parser.parse_args()
 
 def audit_null(df):
     """
-        check value in each row for each column 
-        is null using built in pandas isnull function.
+        check value in each row for each column is null.
     """
-    #  delete white space, replace with nan
-    df = df.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
-    df = df.replace("", np.nan)
+    # audit null
+    null_auditor = NullAuditor()
+    null_per_col = null_auditor.audit(df, "pd_null")
 
+    #  print result
     print("----Checking Null Value----")
     print("null in column:")
-    columns = list(df.columns)
-    null_per_col = df.isnull().sum()
-    for col in columns:
-        print(f" - \"{col}\"\t: {null_per_col[col]}")
+    for key in null_per_col.keys():
+        print(f" - \"{key}\"\t: {null_per_col[key]}")
 
     total_null = null_per_col.sum()
     print(f"\ntotal null value: {total_null}")
