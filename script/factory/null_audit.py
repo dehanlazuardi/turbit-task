@@ -1,5 +1,3 @@
-import string
-from tokenize import String
 import pandas as pd
 import numpy as np
 
@@ -37,10 +35,10 @@ class NullAuditorFactory:
     def __init__(self):
         self._auditor = {}
 
-    def register(self, name: string, function):
+    def register(self, name: str, function):
         self._auditor[name] = function
 
-    def get(self, name):
+    def get(self, name: str):
         auditor = self._auditor.get(name)
         if auditor == None:
             raise ValueError(name)
