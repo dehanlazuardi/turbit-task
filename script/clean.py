@@ -1,6 +1,7 @@
 import argparse
 import pandas as pd
 import numpy as np
+from factory.data_cleaner import DataCleaner
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--file-path', '-f', type=str, help='Path to the csv file')
@@ -13,22 +14,9 @@ if __name__ == '__main__':
     print(f"Cleaning {file_path} file...\n")
     df = pd.read_csv(file_path, sep=";", decimal=",")
 
-    # strip white space from column names
-    df.columns = df.columns.str.strip()
-
-    # extract unit from first row, make new unit columns
-    units = df.iloc[0]
-    units = units.str.strip()
-    units = units.replace("", np.nan)
-    units = units.dropna()
-    for col in list(df.columns):
-        if col in list(units.index):
-            # create column, assign unit to the new columns
-            col_unit_name = col+" unit"
-            df[col_unit_name] = units[col]
-    
-    # restart indexed to 0 because we already drop the first index
-    df = df.drop([0]).reset_index(drop=True)
+    #  clean data
+    data_cleaner = DataCleaner()
+    df = data_cleaner.clean(df, 'pd_cleaner')
 
     # save to csv
     df.to_csv(args.folder_path, sep=';', index=False)
