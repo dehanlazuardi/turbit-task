@@ -27,7 +27,6 @@ class PDNullAuditor:
         # count nulls
         self._nulls_info = self._dataframe.isnull().sum()
 
-
     def get_result(self):
         return self._nulls_info
 
@@ -44,5 +43,5 @@ class NullAuditorFactory:
             raise ValueError(name)
         return auditor()
 
-null_factory = NullAuditorFactory()
-null_factory.register('pd_null', PDNullAuditor)
+null_auditor_factory = NullAuditorFactory()
+null_auditor_factory.register('pd_null', PDNullAuditor)

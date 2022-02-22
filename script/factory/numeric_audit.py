@@ -44,5 +44,5 @@ class NumericAuditorFactory:
             raise ValueError(name)
         return auditor()
 
-numeric_factory = NumericAuditorFactory()
-numeric_factory.register('pd_numeric', PDNumericAuditor)
+numeric_auditor_factory = NumericAuditorFactory()
+numeric_auditor_factory.register('pd_numeric', PDNumericAuditor)
